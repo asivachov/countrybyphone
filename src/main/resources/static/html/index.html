@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Country by phone detector</title>
+        <meta charset="UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <span>Only spaces, numbers and leading + are allowed</span><br><br>
+        <form id="form">
+            Phone number: <input type="text" name="phone" placeholder="+37129648790">
+            <input id="submit" type="submit"  value="detect">
+        </form>
+        <br>
+        Country: <span id="result"></span>
+        <div id="error" style="color: darkred" hidden>Error: <span id="error_text"></span></div>
+        <div id="message" style="color: darkorange" hidden>Message: <span id="message_text"></span></div>
+
+        <script>
+
+            $(document).ready(function(){
+                $("#form").submit(function (e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: '/ws/detectCountry',
+                        type : "GET",
+                        dataType : 'json',
+                        data : $("#form").serialize(),
+                        success : function(result) {
+                            $("#error").hide();
+
+                            if (result.code === 1) {
+                                $("#result").text("");
+                                $("#message_text").text(result.message);
+                                $("#message").show();
+                            } else {
+                                $("#message").hide();
+                                $("#result").text(result.country);
+                            }
+
+                            console.log(result);
+                        },
+                        error: function(result) {
+                            $("#result").text("");
+                            $("#message").hide();
+
+                            $("#error_text").text(result.responseJSON.message);
+                            $("#error").show();
+                            console.log(result);
+                        }
+                    })
+                });
+            });
+
+        </script>
+    </body>
+</html>
