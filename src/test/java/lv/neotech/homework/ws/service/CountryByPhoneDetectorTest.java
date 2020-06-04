@@ -1,4 +1,4 @@
-package lv.neotech.homework.ws.phone;
+package lv.neotech.homework.ws.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,17 +17,17 @@ public class CountryByPhoneDetectorTest {
     CountryByPhoneDetector countryByPhoneDetector;
 
     @Test
-    public void testIfNullReturnedForMultipleZeroes() {
+    public void testIfEmptyReturnedForMultipleZeroes() {
         String country = countryByPhoneDetector.getCountryByPhone("000000000000");
 
-        assertNull(country);
+        assertEquals("", country);
     }
 
     @Test
-    public void testIfNullReturnedForUnexistingCountryCode() {
+    public void testIfEmptyReturnedForNonExistingCountryCode() {
         String country = countryByPhoneDetector.getCountryByPhone("+21429648790");
 
-        assertNull(country);
+        assertEquals("", country);
     }
 
     @Test

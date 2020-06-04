@@ -1,4 +1,4 @@
-package lv.neotech.homework.ws.phone;
+package lv.neotech.homework.ws.service;
 
 public class PhoneNumberFormatException extends RuntimeException {
 

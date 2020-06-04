@@ -1,10 +1,12 @@
 package lv.neotech.homework.ws.controller;
 
-import lv.neotech.homework.ws.json.CountyResponse;
-import lv.neotech.homework.ws.json.ErrorResponse;
-import lv.neotech.homework.ws.phone.CountryByPhoneDetector;
-import lv.neotech.homework.ws.phone.PhoneNumberFormatException;
-import lv.neotech.homework.ws.phone.UnableDetectCountryException;
+import lv.neotech.homework.ws.dto.CountyResponseDto;
+import lv.neotech.homework.ws.dto.ErrorResponseDto;
+import lv.neotech.homework.ws.service.CountryByPhoneDetector;
+import lv.neotech.homework.ws.service.PhoneNumberFormatException;
+import lv.neotech.homework.ws.service.UnableDetectCountryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,40 +19,46 @@ public class RestPhoneController {
     private static final int WRONG_PHONE_NUMBER_FORMAT_CODE = 2;
     private static final int UNKNOWN_INTERNAL_ERROR_CODE = 500;
 
+    private final CountryByPhoneDetector countryByPhoneDetector;
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestPhoneController.class);
+
     @Autowired
-    CountryByPhoneDetector countryByPhoneDetector;
+    public RestPhoneController(CountryByPhoneDetector countryByPhoneDetector) {
+        this.countryByPhoneDetector = countryByPhoneDetector;
+    }
+
+    @RequestMapping(value = "/detectCountry", params = "phone")
+    public CountyResponseDto detect(@RequestParam("phone") String phone) throws PhoneNumberFormatException {
+        String country = countryByPhoneDetector.getCountryByPhone(phone);
+
+        if (country.isEmpty()) {
+            throw new UnableDetectCountryException();
+        }
+
+        return new CountyResponseDto(country);
+    }
 
     @ExceptionHandler(UnableDetectCountryException.class)
     @ResponseStatus(HttpStatus.OK)
-    public ErrorResponse handleUnableDetectCountryException(UnableDetectCountryException e) {
-        return new ErrorResponse(UNABLE_TO_DETECT_COUNTRY_CODE, e.getMessage());
+    public ErrorResponseDto handleUnableDetectCountryException(UnableDetectCountryException e) {
+        return new ErrorResponseDto(UNABLE_TO_DETECT_COUNTRY_CODE, e.getMessage());
     }
 
     @ExceptionHandler(PhoneNumberFormatException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleWrongPhoneNumberException(PhoneNumberFormatException e) {
-        return new ErrorResponse(WRONG_PHONE_NUMBER_FORMAT_CODE, e.getMessage());
+    public ErrorResponseDto handleWrongPhoneNumberException(PhoneNumberFormatException e) {
+        return new ErrorResponseDto(WRONG_PHONE_NUMBER_FORMAT_CODE, e.getMessage());
     }
 
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public ErrorResponse handleOtherExceptions(Exception e) {
-        e.printStackTrace();
-        return new ErrorResponse(UNKNOWN_INTERNAL_ERROR_CODE,
+    public ErrorResponseDto handleOtherExceptions(Exception e) {
+        LOG.error("Unexpected error occurred", e);
+        return new ErrorResponseDto(UNKNOWN_INTERNAL_ERROR_CODE,
                 "Unknown internal error");
-    }
-
-    @RequestMapping(value = "/detectCountry", params = "phone")
-    public CountyResponse detect(@RequestParam("phone") String phone) throws PhoneNumberFormatException {
-        String country = countryByPhoneDetector.getCountryByPhone(phone);
-
-        if (country == null) {
-            throw new UnableDetectCountryException();
-        }
-
-        return new CountyResponse(country);
     }
 
 }

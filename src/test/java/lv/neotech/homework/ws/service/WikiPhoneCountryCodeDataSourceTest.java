@@ -1,4 +1,4 @@
-package lv.neotech.homework.ws.phone;
+package lv.neotech.homework.ws.service;
 
 import org.junit.Before;
 import org.junit.Test;

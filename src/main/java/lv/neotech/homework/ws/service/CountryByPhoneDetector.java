@@ -1,4 +1,4 @@
-package lv.neotech.homework.ws.phone;
+package lv.neotech.homework.ws.service;
 
 import lv.neotech.homework.ws.validator.PhoneValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,15 @@ public class CountryByPhoneDetector {
 
     private static final String DELIMITER_FOR_MULTIPLE_COUNTRIES = " / ";
     private static final int MAX_CODE_LENGTH_BASED_ON_WIKI = 10;
-    @Autowired
-    PhoneValidator phoneValidator;
-    @Autowired
-    private WikiPhoneCountryCodeDataSource phoneCountryCodeDataSource;
+    private final PhoneValidator phoneValidator;
+    private final WikiPhoneCountryCodeDataSource phoneCountryCodeDataSource;
     private Map<String, List<String>> countryByPhoneCodeMap;
+
+    @Autowired
+    public CountryByPhoneDetector(PhoneValidator phoneValidator, WikiPhoneCountryCodeDataSource phoneCountryCodeDataSource) {
+        this.phoneValidator = phoneValidator;
+        this.phoneCountryCodeDataSource = phoneCountryCodeDataSource;
+    }
 
     @PostConstruct
     private void loadData() throws IOException {
@@ -26,15 +30,14 @@ public class CountryByPhoneDetector {
     }
 
     public String getCountryByPhone(String phone) throws PhoneNumberFormatException {
+        String country = "";
+
         phoneValidator.validate(phone);
 
-        phone = phone.trim();
-
-        String country = null;
         phone = removeExtraChars(phone);
         int codeLength = calcMaxCodeLength(phone);
 
-        while ((codeLength > 0) && (country == null)) {
+        while ((codeLength > 0) && (country.isEmpty())) {
             String codeToCheck = phone.substring(0, codeLength);
             country = getCountryByCode(codeToCheck);
 
@@ -67,7 +70,7 @@ public class CountryByPhoneDetector {
     private String getCountryByCode(String code) {
         List<String> countries = countryByPhoneCodeMap.get(code);
 
-        return (countries == null) ? null : String.join(DELIMITER_FOR_MULTIPLE_COUNTRIES, countries);
+        return (countries == null) ? "" : String.join(DELIMITER_FOR_MULTIPLE_COUNTRIES, countries);
     }
 
 }

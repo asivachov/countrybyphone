@@ -1,6 +1,6 @@
 package lv.neotech.homework.ws.validator;
 
-import lv.neotech.homework.ws.phone.PhoneNumberFormatException;
+import lv.neotech.homework.ws.service.PhoneNumberFormatException;
 import org.springframework.stereotype.Component;
 
 @Component

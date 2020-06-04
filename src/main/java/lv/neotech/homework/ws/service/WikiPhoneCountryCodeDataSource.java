@@ -1,9 +1,11 @@
-package lv.neotech.homework.ws.phone;
+package lv.neotech.homework.ws.service;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -15,16 +17,20 @@ class WikiPhoneCountryCodeDataSource {
 
     private static final String WIKI_URL = "https://en.wikipedia.org/wiki/List_of_country_calling_codes";
     private static final String TEXT_OF_NEEDLE_TH_TAG = "Country, Territory or Service";
-    private static final int INDEX_OF_COLUMN_WITH_COUNTRY = 0;
-    private static final int INDEX_OF_COLUMN_WITH_CODES = 1;
+    private static final int COUNTRY_COLUMN_INDEX = 0;
+    private static final int CODES_COLUMN_INDEX = 1;
 
+    private static final Logger LOG = LoggerFactory.getLogger(WikiPhoneCountryCodeDataSource.class);
 
-    public Map<String, List<String>> getCodeMap() throws IOException {
+    Map<String, List<String>> getCodeMap() throws IOException {
+        LOG.info("Loading data map from WIKI");
         Document wikiPage = loadWikiPage();
 
         Element phoneCountryCodeTable = getPhoneCountryCodeTable(wikiPage);
         Elements rowsInPhoneCountryCodeTable = getRowsInPhoneCountryCodeTable(phoneCountryCodeTable);
-        return extractDataFromRows(rowsInPhoneCountryCodeTable);
+        Map<String, List<String>> codeMap = extractDataFromRows(rowsInPhoneCountryCodeTable);
+        LOG.info("Data map successfully loaded from WIKI");
+        return codeMap;
     }
 
     private Document loadWikiPage() throws IOException {
@@ -54,26 +60,30 @@ class WikiPhoneCountryCodeDataSource {
         while (rowIter.hasNext()) {
             Element row = rowIter.next();
 
-            String country = extractCountryFromRow(row);
-            List<String> codesForCountry = extractCodesFromRow(row);
-
-            putCodesAndCountryIntoMap(codesForCountry, country, countryByCodeMap);
+            extractData(row, countryByCodeMap);
         }
 
         return countryByCodeMap;
     }
 
+    private void extractData(Element row, Map<String, List<String>> destination) {
+        String country = extractCountryFromRow(row);
+        List<String> codes = extractCodesFromRow(row);
+
+        putCodesAndCountry(codes, country, destination);
+    }
+
     private String extractCountryFromRow(Element row) {
         Elements colsInRow = row.children();
 
-        return colsInRow.get(INDEX_OF_COLUMN_WITH_COUNTRY).text();
+        return colsInRow.get(COUNTRY_COLUMN_INDEX).text();
     }
 
     private List<String> extractCodesFromRow(Element row) {
-        Elements colsInRow = row.children();
+        Elements cells = row.children();
 
-        Element codeCol = colsInRow.get(INDEX_OF_COLUMN_WITH_CODES);
-        Elements codesInsideHyperlinkTags = codeCol.select("a");
+        Element codeCell = cells.get(CODES_COLUMN_INDEX);
+        Elements codesInsideHyperlinkTags = codeCell.select("a");
 
         return extractCodesFromHyperlinkTags(codesInsideHyperlinkTags);
     }
@@ -88,11 +98,11 @@ class WikiPhoneCountryCodeDataSource {
                 .collect(Collectors.toList());
     }
 
-    private void putCodesAndCountryIntoMap(List<String> codes, String country, Map<String, List<String>> map) {
-        codes.forEach(code -> {
-            List<String> countriesForCode = map.computeIfAbsent(code, k -> new ArrayList<>());
+    private void putCodesAndCountry(List<String> codes, String country, Map<String, List<String>> destination) {
+        for (String code : codes) {
+            List<String> countriesForCode = destination.computeIfAbsent(code, k -> new ArrayList<>());
             countriesForCode.add(country);
-        });
+        }
     }
 
 }
