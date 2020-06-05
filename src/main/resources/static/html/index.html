@@ -11,7 +11,7 @@
             <label>
                 Phone number: <input type="text" id="phone" name="phone" placeholder="+37129648790">
             </label>
-            <input id="submit" type="submit"  value="detect">
+            <input id="submit" type="submit" value="detect">
         </form>
         <br>
         Country: <span id="result"></span>
@@ -31,6 +31,7 @@
                         return;
                     }
                     $("#error").hide();
+                    $("#submit").prop("disabled", true);
                     
                     $.ajax({
                         url: "/ws/detectCountry",
@@ -49,6 +50,9 @@
                         },
                         error: function(result) {
                             showError(result.responseJSON.message);
+                        },
+                        complete: function(result) {
+                            $("#submit").removeAttr('disabled');
                         }
                     })
                 });
