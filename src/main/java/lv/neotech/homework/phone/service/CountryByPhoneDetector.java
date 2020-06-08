@@ -29,12 +29,12 @@ public class CountryByPhoneDetector {
         countryByPhoneCodeMap = phoneCodesDataService.getCodeMap();
     }
 
-    public String getCountryByPhone(String phone) throws PhoneNumberFormatException {
+    public String detect(String phone) throws PhoneNumberFormatException {
         String country = "";
 
         phoneValidator.validate(phone);
+        phone = stripCharsForCountrySearch(phone);
 
-        phone = removeExtraChars(phone);
         int codeLength = calcMaxCodeLength(phone);
 
         while ((codeLength > 0) && (country.isEmpty())) {
@@ -47,7 +47,7 @@ public class CountryByPhoneDetector {
         return country;
     }
 
-    private String removeExtraChars(String phone) {
+    private String stripCharsForCountrySearch(String phone) {
         phone = phone.replaceAll("[+ ]", "");
         return removeLeadingZeroes(phone);
     }
@@ -63,7 +63,7 @@ public class CountryByPhoneDetector {
     }
 
     private int calcMaxCodeLength(String phone) {
-        phone = removeExtraChars(phone);
+        phone = stripCharsForCountrySearch(phone);
         return (phone.length() > 10) ? MAX_CODE_LENGTH_BASED_ON_WIKI : phone.length() - 1;
     }
 

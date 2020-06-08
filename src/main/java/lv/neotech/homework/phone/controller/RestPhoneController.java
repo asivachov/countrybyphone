@@ -30,7 +30,7 @@ public class RestPhoneController {
 
     @RequestMapping(value = "/detectCountry", params = "phone")
     public CountyResponseDto detect(@RequestParam("phone") String phone) throws PhoneNumberFormatException {
-        String country = countryByPhoneDetector.getCountryByPhone(phone);
+        String country = countryByPhoneDetector.detect(phone);
 
         if (country.isEmpty()) {
             throw new UnableDetectCountryException();
