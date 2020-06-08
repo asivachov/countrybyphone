@@ -1,13 +1,14 @@
-package lv.neotech.homework.ws.controller;
+package lv.neotech.homework.phone.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/ui/**")
+@RequestMapping("/")
 public class UiController {
 
-    @RequestMapping("/")
+    @RequestMapping(method = RequestMethod.GET)
     public String index() {
         return "/html/index.html";
     }

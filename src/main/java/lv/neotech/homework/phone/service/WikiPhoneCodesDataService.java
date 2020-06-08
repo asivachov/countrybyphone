@@ -1,4 +1,4 @@
-package lv.neotech.homework.ws.service;
+package lv.neotech.homework.phone.service;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -6,21 +6,21 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
-class WikiPhoneCountryCodeDataSource {
+@Service
+class WikiPhoneCodesDataService {
 
     private static final String WIKI_URL = "https://en.wikipedia.org/wiki/List_of_country_calling_codes";
     private static final String TEXT_OF_NEEDLE_TH_TAG = "Country, Territory or Service";
     private static final int COUNTRY_COLUMN_INDEX = 0;
     private static final int CODES_COLUMN_INDEX = 1;
 
-    private static final Logger LOG = LoggerFactory.getLogger(WikiPhoneCountryCodeDataSource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WikiPhoneCodesDataService.class);
 
     Map<String, List<String>> getCodeMap() throws IOException {
         LOG.info("Loading data map from WIKI");

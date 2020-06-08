@@ -1,4 +1,4 @@
-package lv.neotech.homework.ws.dto;
+package lv.neotech.homework.phone.dto;
 
 public class CountyResponseDto {
     private final String country;

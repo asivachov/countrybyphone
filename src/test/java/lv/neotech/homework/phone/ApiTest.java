@@ -1,4 +1,4 @@
-package lv.neotech.homework.ws;
+package lv.neotech.homework.phone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,12 +16,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class WsTest {
+public class ApiTest {
 
     @Autowired
     private MockMvc mvc;
 
-    private static final String DETECT_COUNTRY_PATH_MASK = "/ws/detectCountry?phone=%s";
+    private static final String DETECT_COUNTRY_PATH_MASK = "/api/detectCountry?phone=%s";
 
     @Test
     public void testDetectPhoneForEmptyValue() throws Exception {
@@ -46,7 +46,7 @@ public class WsTest {
 
 
     @Test
-    public void testDetectPhoneReturnsErrorForUnexistingCountryCode() throws Exception {
+    public void testDetectPhoneReturnsErrorForNonExistingCountryCode() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get(formatRequestPath("+21429648790")).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(1));

@@ -1,32 +1,32 @@
-package lv.neotech.homework.ws.service;
+package lv.neotech.homework.phone.service;
 
-import lv.neotech.homework.ws.validator.PhoneValidator;
+import lv.neotech.homework.phone.validator.PhoneValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class CountryByPhoneDetector {
 
     private static final String DELIMITER_FOR_MULTIPLE_COUNTRIES = " / ";
     private static final int MAX_CODE_LENGTH_BASED_ON_WIKI = 10;
     private final PhoneValidator phoneValidator;
-    private final WikiPhoneCountryCodeDataSource phoneCountryCodeDataSource;
+    private final WikiPhoneCodesDataService phoneCodesDataService;
     private Map<String, List<String>> countryByPhoneCodeMap;
 
     @Autowired
-    public CountryByPhoneDetector(PhoneValidator phoneValidator, WikiPhoneCountryCodeDataSource phoneCountryCodeDataSource) {
+    public CountryByPhoneDetector(PhoneValidator phoneValidator, WikiPhoneCodesDataService phoneCodesDataService) {
         this.phoneValidator = phoneValidator;
-        this.phoneCountryCodeDataSource = phoneCountryCodeDataSource;
+        this.phoneCodesDataService = phoneCodesDataService;
     }
 
     @PostConstruct
     private void loadData() throws IOException {
-        countryByPhoneCodeMap = phoneCountryCodeDataSource.getCodeMap();
+        countryByPhoneCodeMap = phoneCodesDataService.getCodeMap();
     }
 
     public String getCountryByPhone(String phone) throws PhoneNumberFormatException {

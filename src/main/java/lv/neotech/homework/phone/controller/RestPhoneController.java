@@ -1,10 +1,10 @@
-package lv.neotech.homework.ws.controller;
+package lv.neotech.homework.phone.controller;
 
-import lv.neotech.homework.ws.dto.CountyResponseDto;
-import lv.neotech.homework.ws.dto.ErrorResponseDto;
-import lv.neotech.homework.ws.service.CountryByPhoneDetector;
-import lv.neotech.homework.ws.service.PhoneNumberFormatException;
-import lv.neotech.homework.ws.service.UnableDetectCountryException;
+import lv.neotech.homework.phone.dto.CountyResponseDto;
+import lv.neotech.homework.phone.dto.ErrorResponseDto;
+import lv.neotech.homework.phone.service.CountryByPhoneDetector;
+import lv.neotech.homework.phone.service.PhoneNumberFormatException;
+import lv.neotech.homework.phone.service.UnableDetectCountryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/ws/**")
+@RequestMapping("/api/**")
 public class RestPhoneController {
 
     private static final int UNABLE_TO_DETECT_COUNTRY_CODE = 1;

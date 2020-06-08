@@ -1,4 +1,4 @@
-package lv.neotech.homework.ws.service;
+package lv.neotech.homework.phone.service;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,16 +15,16 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class WikiPhoneCountryCodeDataSourceTest {
+public class WikiPhoneCodesDataServiceTest {
 
     @Autowired
-    WikiPhoneCountryCodeDataSource wikiPhoneCountryCodeDataSource;
-    private Map<String, List<String>> map;
+    WikiPhoneCodesDataService wikiPhoneCodesDataService;
+    private static Map<String, List<String>> map;
 
     @Before
     public void loadDataMap() throws IOException {
         if (map == null) {
-            map = wikiPhoneCountryCodeDataSource.getCodeMap();
+            map = wikiPhoneCodesDataService.getCodeMap();
         }
     }
 

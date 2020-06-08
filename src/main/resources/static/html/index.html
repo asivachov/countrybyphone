@@ -23,18 +23,20 @@
             $(document).ready(function(){
                 $("#form").submit(function (e) {
                     e.preventDefault();
+                    let submitBtn = $("#submit");
+                    submitBtn.prop("disabled", true);
                     
                     try {
                         validate($("#phone").val());
                     } catch (e) {
                         showError(e);
+                        submitBtn.removeAttr('disabled');
                         return;
                     }
                     $("#error").hide();
-                    $("#submit").prop("disabled", true);
                     
                     $.ajax({
-                        url: "/ws/detectCountry",
+                        url: "/api/detectCountry",
                         type : "GET",
                         dataType : "json",
                         data : $("#form").serialize(),
@@ -51,8 +53,8 @@
                         error: function(result) {
                             showError(result.responseJSON.message);
                         },
-                        complete: function(result) {
-                            $("#submit").removeAttr('disabled');
+                        complete: function() {
+                            submitBtn.removeAttr('disabled');
                         }
                     })
                 });
